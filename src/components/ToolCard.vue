@@ -27,12 +27,9 @@ const iconComponent = computed(() => {
 </script>
 
 <template>
-  <div 
-    class="tool-card group bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 cursor-pointer transition-all duration-300 transform hover:-translate-y-1"
-    @click="handleClick"
-  >
-    <div class="flex items-start justify-between mb-4">
-      <div class="p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+  <div class="tool-card" @click="handleClick">
+    <div class="card-header">
+      <div class="icon-wrapper">
         <el-icon :size="24">
           <component :is="iconComponent" />
         </el-icon>
@@ -40,24 +37,75 @@ const iconComponent = computed(() => {
       <el-tag size="small" effect="plain" round>{{ tool.category }}</el-tag>
     </div>
     
-    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+    <h3 class="tool-title">
       {{ tool.name }}
     </h3>
     
-    <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+    <p class="tool-desc">
       {{ tool.description }}
     </p>
   </div>
 </template>
 
-<style scoped>
-.bg-primary\/10 {
+<style lang="scss" scoped>
+.tool-card {
+  background-color: var(--el-bg-color-overlay);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--el-box-shadow-light);
+  border: 1px solid var(--el-border-color-lighter);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: var(--el-box-shadow);
+    transform: translateY(-4px);
+    
+    .icon-wrapper {
+      background-color: var(--el-color-primary);
+      color: #fff;
+    }
+    
+    .tool-title {
+      color: var(--el-color-primary);
+    }
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.icon-wrapper {
+  padding: 12px;
+  border-radius: 8px;
   background-color: var(--el-color-primary-light-9);
-}
-.text-primary {
   color: var(--el-color-primary);
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.group-hover\:bg-primary:hover {
-  background-color: var(--el-color-primary);
+
+.tool-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
+  transition: color 0.3s;
+}
+
+.tool-desc {
+  font-size: 0.875rem;
+  color: var(--el-text-color-secondary);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

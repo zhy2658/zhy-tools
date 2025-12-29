@@ -17,6 +17,11 @@ const routes = [
     name: 'image-compression',
     component: () => import('@/pages/tools/ImageCompression.vue'),
   },
+  {
+    path: '/tools/video-compression',
+    name: 'video-compression',
+    component: () => import('@/pages/tools/VideoCompression.vue'),
+  },
   // Placeholders for other tools
   {
     path: '/tools/json-formatter',
