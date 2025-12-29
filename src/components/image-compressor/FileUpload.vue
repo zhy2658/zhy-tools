@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 const emit = defineEmits<{
   (e: 'file-selected', file: File): void
 }>()
-
-const handleDrop = (e: DragEvent) => {
-  e.preventDefault()
-  const file = e.dataTransfer?.files[0]
-  validateAndEmit(file)
-}
 
 const handleChange = (uploadFile: any) => {
   validateAndEmit(uploadFile.raw)

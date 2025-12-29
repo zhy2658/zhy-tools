@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, watch } from 'vue'
 
-const props = defineProps<{
+const { loading } = defineProps<{
   loading: boolean
 }>()
 
