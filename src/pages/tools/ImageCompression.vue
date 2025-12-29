@@ -40,8 +40,8 @@ const triggerCompression = () => {
 <template>
   <div class="max-w-5xl mx-auto py-8">
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Image Compression</h1>
-      <p class="text-gray-600 dark:text-gray-400">Reduce image file size while maintaining quality.</p>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">图片压缩</h1>
+      <p class="text-gray-600 dark:text-gray-400">在尽量保证清晰度的前提下压缩图片体积。</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -58,11 +58,11 @@ const triggerCompression = () => {
       <!-- Right Column: Preview & Action -->
       <div class="lg:col-span-2">
         <div v-if="!state.currentFile" class="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-           <p class="text-gray-400">Upload an image to see preview</p>
+           <p class="text-gray-400">上传图片以查看预览</p>
         </div>
 
         <div v-else>
-          <div v-loading="isCompressing" element-loading-text="Compressing..." element-loading-background="rgba(0, 0, 0, 0.7)" class="min-h-[200px] rounded-xl relative">
+          <div v-loading="isCompressing" element-loading-text="压缩中..." element-loading-background="rgba(0, 0, 0, 0.7)" class="min-h-[200px] rounded-xl relative">
              <ImagePreview 
                v-if="result"
                :original-url="result.originalPreviewUrl"

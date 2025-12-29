@@ -20,7 +20,7 @@ defineEmits<{
       @click="$emit('download')"
       class="w-full md:w-auto px-8"
     >
-      Download Compressed Image
+      下载压缩后图片
     </el-button>
   </div>
 </template>

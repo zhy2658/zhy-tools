@@ -14,7 +14,7 @@ const validateAndEmit = (file?: File) => {
   if (!file) return
 
   if (!file.type.startsWith('image/')) {
-    ElMessage.error('Please upload an image file')
+    ElMessage.error('请上传图片文件')
     return
   }
 
@@ -34,11 +34,11 @@ const validateAndEmit = (file?: File) => {
   >
     <el-icon class="el-icon--upload"><upload-filled /></el-icon>
     <div class="el-upload__text">
-      Drop file here or <em>click to upload</em>
+      将文件拖拽到此或<em>点击上传</em>
     </div>
     <template #tip>
       <div class="el-upload__tip text-center">
-        jpg/png/webp files with a size less than 10MB
+        支持 jpg/png/webp，文件大小不超过 10MB
       </div>
     </template>
   </el-upload>

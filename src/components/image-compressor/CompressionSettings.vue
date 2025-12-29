@@ -23,10 +23,10 @@ watch(options, (newVal) => {
 
 <template>
   <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
-    <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Settings</h3>
+    <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">压缩设置</h3>
     
     <el-form label-position="top">
-      <el-form-item label="Max Size (MB)">
+      <el-form-item label="最大文件大小（MB）">
         <div class="flex items-center gap-4 w-full">
           <el-slider 
             v-model="options.maxSizeMB" 
@@ -48,7 +48,7 @@ watch(options, (newVal) => {
         </div>
       </el-form-item>
 
-      <el-form-item label="Max Width/Height (px)">
+      <el-form-item label="最大宽高（px）">
         <el-input-number 
           v-model="options.maxWidthOrHeight" 
           :min="100" 
@@ -59,7 +59,7 @@ watch(options, (newVal) => {
         />
       </el-form-item>
 
-      <el-form-item label="Quality (0-1)">
+      <el-form-item label="质量（0-1）">
          <div class="flex items-center gap-4 w-full">
           <el-slider 
             v-model="options.initialQuality" 

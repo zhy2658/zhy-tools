@@ -17,7 +17,7 @@ const toggleMenu = () => {
         <div class="flex items-center">
           <router-link to="/" class="flex-shrink-0 flex items-center gap-2">
             <el-icon :size="24" class="text-primary"><Tools /></el-icon>
-            <span class="text-xl font-bold text-gray-900 dark:text-white">ToolBox</span>
+            <span class="text-xl font-bold text-gray-900 dark:text-white">工具箱</span>
           </router-link>
           
           <!-- Desktop Menu -->
@@ -29,7 +29,7 @@ const toggleMenu = () => {
                 active-class="bg-primary/10 text-primary dark:text-primary-light"
                 :class="[$route.path === '/' ? '' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800']"
               >
-                Home
+                首页
               </router-link>
               <router-link 
                 to="/about" 
@@ -37,7 +37,7 @@ const toggleMenu = () => {
                 active-class="bg-primary/10 text-primary dark:text-primary-light"
                 :class="[$route.path === '/about' ? '' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800']"
               >
-                About
+                关于
               </router-link>
             </div>
           </div>
@@ -46,7 +46,7 @@ const toggleMenu = () => {
         <!-- Right Side -->
         <div class="hidden md:flex items-center gap-4">
           <ThemeToggle />
-          <a href="https://github.com" target="_blank" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          <a href="https://github.com/zhy2658/zhy-tools" target="_blank" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
             <el-icon :size="20"><Link /></el-icon>
           </a>
         </div>
@@ -77,7 +77,7 @@ const toggleMenu = () => {
           :class="[$route.path === '/' ? '' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800']"
           @click="isMenuOpen = false"
         >
-          Home
+          首页
         </router-link>
         <router-link 
           to="/about" 
@@ -86,7 +86,7 @@ const toggleMenu = () => {
           :class="[$route.path === '/about' ? '' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800']"
           @click="isMenuOpen = false"
         >
-          About
+          关于
         </router-link>
       </div>
     </div>

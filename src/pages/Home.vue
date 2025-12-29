@@ -14,27 +14,27 @@ interface Tool {
 const tools = ref<Tool[]>([
   {
     id: 'image-compression',
-    name: 'Image Compression',
-    description: 'Compress image size online without losing quality. Supports JPEG, PNG, WebP.',
+    name: '图片压缩',
+    description: '在线压缩图片体积，尽量保持清晰度。支持 JPEG、PNG、WebP。',
     icon: 'Picture',
     route: '/tools/image-compression',
-    category: 'Image'
+    category: '图片'
   },
   {
     id: 'json-formatter',
-    name: 'JSON Formatter',
-    description: 'Beautify and validate JSON data. (Coming Soon)',
+    name: 'JSON 格式化',
+    description: '美化与校验 JSON 数据（即将推出）',
     icon: 'Document',
     route: '/tools/json-formatter',
-    category: 'Dev'
+    category: '开发'
   },
   {
     id: 'color-picker',
-    name: 'Color Picker',
-    description: 'Pick colors and get hex/rgb values. (Coming Soon)',
+    name: '取色器',
+    description: '选择颜色并获取 HEX/RGB 值（即将推出）',
     icon: 'MagicStick',
     route: '/tools/color-picker',
-    category: 'Design'
+    category: '设计'
   }
 ])
 </script>
@@ -44,11 +44,10 @@ const tools = ref<Tool[]>([
     <!-- Hero Section -->
     <div class="text-center mb-16">
       <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600 mb-4 pb-2">
-        Online Developer Tools
+        前端工具合集
       </h1>
       <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-        A collection of free, simple, and efficient online tools for developers and designers.
-        Processing happens locally in your browser for privacy.
+        免费、简单、高效的在线工具集合。所有处理均在浏览器本地完成，保障隐私。
       </p>
     </div>
 
