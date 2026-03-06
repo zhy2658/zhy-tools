@@ -34,14 +34,38 @@ export function useImageCompression() {
       originalPreviewUrl = URL.createObjectURL(file)
     }
 
-    // Ensure fileType is passed if specified
     const compressionOptions = { ...options }
-    if (options.fileType) {
-       // browser-image-compression uses fileType to determine output format
-       // It expects 'image/jpeg', 'image/png', etc.
+    
+    // Intelligent handling for aggressive mode or large PNGs
+    if (!compressionOptions.fileType && file.type === 'image/png') {
+       // If aggressive mode (low quality or small size) and no format specified, suggest WebP
+       // We detect aggressive mode by checking if initialQuality < 0.8 or maxSizeMB < 1
+       if ((options.initialQuality && options.initialQuality < 0.8) || (options.maxSizeMB && options.maxSizeMB < 1)) {
+         compressionOptions.fileType = 'image/webp'
+       }
     }
 
-    const compressedFile = await imageCompression(file, compressionOptions)
+    let compressedFile: File
+    try {
+      compressedFile = await imageCompression(file, compressionOptions)
+      
+      // Smart Fallback: If compressed file is larger than original, and we didn't change format/dimensions significantly intended
+      // We should check if the user actually wanted to change format.
+      const formatChanged = compressionOptions.fileType && compressionOptions.fileType !== file.type
+      
+      // If format didn't change, and size increased, revert to original (or if quality mode)
+      if (!formatChanged && compressedFile.size > file.size) {
+        // If we are in "Quality" mode (high quality, large max size), we probably don't want a larger file
+        // unless we resized it UP (which we don't support here, only downscaling).
+        // So if it's larger, it's inefficient re-encoding.
+        if (options.initialQuality && options.initialQuality >= 0.9) {
+           compressedFile = file
+        }
+      }
+    } catch (error) {
+      console.warn('Compression failed, falling back to original file', error)
+      compressedFile = file
+    }
     
     if (generatePreview) {
       compressedPreviewUrl = URL.createObjectURL(compressedFile)
