@@ -14,6 +14,7 @@ const options = reactive({
   maxWidthOrHeight: 1920,
   initialQuality: 0.8,
   useWebWorker: true,
+  fileType: undefined as string | undefined,
 })
 
 watch(options, (newVal) => {
@@ -26,6 +27,15 @@ watch(options, (newVal) => {
     <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">压缩设置</h3>
     
     <el-form label-position="top">
+      <el-form-item label="输出格式">
+        <el-select v-model="options.fileType" placeholder="保持原格式" class="w-full" :disabled="loading">
+          <el-option label="保持原格式" :value="undefined" />
+          <el-option label="JPEG" value="image/jpeg" />
+          <el-option label="PNG" value="image/png" />
+          <el-option label="WebP" value="image/webp" />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="最大文件大小（MB）">
         <div class="flex items-center gap-4 w-full">
           <el-slider 

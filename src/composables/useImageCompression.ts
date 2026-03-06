@@ -15,8 +15,8 @@ export interface CompressionResult {
   originalSize: number
   compressedSize: number
   compressionRatio: number
-  previewUrl: string
-  originalPreviewUrl: string
+  previewUrl?: string
+  originalPreviewUrl?: string
   relativePath?: string
 }
 
@@ -26,6 +26,39 @@ export function useImageCompression() {
   const result = ref<CompressionResult | null>(null)
   const resultList = ref<CompressionResult[]>([])
 
+  const processFile = async (file: File, options: CompressionOptions, generatePreview: boolean, relativePath?: string): Promise<CompressionResult> => {
+    let originalPreviewUrl
+    let compressedPreviewUrl
+
+    if (generatePreview) {
+      originalPreviewUrl = URL.createObjectURL(file)
+    }
+
+    // Ensure fileType is passed if specified
+    const compressionOptions = { ...options }
+    if (options.fileType) {
+       // browser-image-compression uses fileType to determine output format
+       // It expects 'image/jpeg', 'image/png', etc.
+    }
+
+    const compressedFile = await imageCompression(file, compressionOptions)
+    
+    if (generatePreview) {
+      compressedPreviewUrl = URL.createObjectURL(compressedFile)
+    }
+
+    return {
+      originalFile: file,
+      compressedFile: compressedFile,
+      originalSize: file.size,
+      compressedSize: compressedFile.size,
+      compressionRatio: (1 - compressedFile.size / file.size) * 100,
+      previewUrl: compressedPreviewUrl,
+      originalPreviewUrl: originalPreviewUrl,
+      relativePath
+    }
+  }
+
   const compressImage = async (file: File, options: CompressionOptions) => {
     isCompressing.value = true
     error.value = null
@@ -33,18 +66,7 @@ export function useImageCompression() {
     resultList.value = []
 
     try {
-      const originalPreviewUrl = URL.createObjectURL(file)
-      const compressedFile = await imageCompression(file, options)
-      const compressedPreviewUrl = URL.createObjectURL(compressedFile)
-      result.value = {
-        originalFile: file,
-        compressedFile: compressedFile,
-        originalSize: file.size,
-        compressedSize: compressedFile.size,
-        compressionRatio: (1 - compressedFile.size / file.size) * 100,
-        previewUrl: compressedPreviewUrl,
-        originalPreviewUrl: originalPreviewUrl
-      }
+      result.value = await processFile(file, options, true)
     } catch (err: any) {
       console.error('Compression error:', err)
       error.value = err.message || 'Failed to compress image'
@@ -53,27 +75,27 @@ export function useImageCompression() {
     }
   }
 
-  const compressImages = async (files: File[], options: CompressionOptions) => {
+  const compressImages = async (files: File[], options: CompressionOptions, generatePreview: boolean = true) => {
     isCompressing.value = true
     error.value = null
     result.value = null
     resultList.value = []
+    
     try {
-      for (const file of files) {
-        const originalPreviewUrl = URL.createObjectURL(file)
-        const compressedFile = await imageCompression(file, options)
-        const compressedPreviewUrl = URL.createObjectURL(compressedFile)
-        resultList.value.push({
-          originalFile: file,
-          compressedFile,
-          originalSize: file.size,
-          compressedSize: compressedFile.size,
-          compressionRatio: (1 - compressedFile.size / file.size) * 100,
-          previewUrl: compressedPreviewUrl,
-          originalPreviewUrl: originalPreviewUrl,
-        })
+      const concurrencyLimit = 5
+      const chunks = []
+      for (let i = 0; i < files.length; i += concurrencyLimit) {
+        chunks.push(files.slice(i, i + concurrencyLimit))
       }
-      if (resultList.value.length === 1) {
+
+      for (const chunk of chunks) {
+        const chunkResults = await Promise.all(
+          chunk.map(file => processFile(file, options, generatePreview))
+        )
+        resultList.value.push(...chunkResults)
+      }
+
+      if (resultList.value.length === 1 && generatePreview) {
         result.value = resultList.value[0]
       }
     } catch (err: any) {
@@ -84,28 +106,27 @@ export function useImageCompression() {
     }
   }
 
-  const compressImagesWithPaths = async (items: { file: File; relativePath: string }[], options: CompressionOptions) => {
+  const compressImagesWithPaths = async (items: { file: File; relativePath: string }[], options: CompressionOptions, generatePreview: boolean = true) => {
     isCompressing.value = true
     error.value = null
     result.value = null
     resultList.value = []
+    
     try {
-      for (const { file, relativePath } of items) {
-        const originalPreviewUrl = URL.createObjectURL(file)
-        const compressedFile = await imageCompression(file, options)
-        const compressedPreviewUrl = URL.createObjectURL(compressedFile)
-        resultList.value.push({
-          originalFile: file,
-          compressedFile,
-          originalSize: file.size,
-          compressedSize: compressedFile.size,
-          compressionRatio: (1 - compressedFile.size / file.size) * 100,
-          previewUrl: compressedPreviewUrl,
-          originalPreviewUrl: originalPreviewUrl,
-          relativePath,
-        })
+      const concurrencyLimit = 5
+      const chunks = []
+      for (let i = 0; i < items.length; i += concurrencyLimit) {
+        chunks.push(items.slice(i, i + concurrencyLimit))
       }
-      if (resultList.value.length === 1) {
+
+      for (const chunk of chunks) {
+        const chunkResults = await Promise.all(
+          chunk.map(({ file, relativePath }) => processFile(file, options, generatePreview, relativePath))
+        )
+        resultList.value.push(...chunkResults)
+      }
+
+      if (resultList.value.length === 1 && generatePreview) {
         result.value = resultList.value[0]
       }
     } catch (err: any) {
@@ -117,7 +138,7 @@ export function useImageCompression() {
   }
 
   const downloadImage = () => {
-    if (!result.value) return
+    if (!result.value || !result.value.previewUrl) return
     const link = document.createElement('a')
     link.href = result.value.previewUrl
     link.download = `compressed-${result.value.originalFile.name}`
@@ -129,12 +150,23 @@ export function useImageCompression() {
   const downloadAll = () => {
     if (!resultList.value.length) return
     for (const item of resultList.value) {
+      let url = item.previewUrl
+      let shouldRevoke = false
+      if (!url) {
+        url = URL.createObjectURL(item.compressedFile)
+        shouldRevoke = true
+      }
+
       const link = document.createElement('a')
-      link.href = item.previewUrl
+      link.href = url
       link.download = `compressed-${item.originalFile.name}`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+
+      if (shouldRevoke) {
+        URL.revokeObjectURL(url)
+      }
     }
   }
 

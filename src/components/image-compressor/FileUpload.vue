@@ -3,6 +3,10 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 
+const props = defineProps<{
+  mode?: 'single' | 'batch'
+}>()
+
 const emit = defineEmits<{
   (e: 'file-selected', file: File): void
   (e: 'files-selected', files: File[]): void
@@ -13,7 +17,11 @@ const folderInputRef = ref<HTMLInputElement | null>(null)
 
 const handleChange = (uploadFile: any, uploadFiles?: any[]) => {
   // 单个
-  validateAndEmit(uploadFile?.raw)
+  if (props.mode === 'single') {
+    validateAndEmit(uploadFile?.raw)
+    return
+  }
+
   // 批量（支持多选）
   if (Array.isArray(uploadFiles) && uploadFiles.length) {
     const files: File[] = uploadFiles
@@ -39,6 +47,7 @@ const validateAndEmit = (file?: File) => {
 const handleFolderPick = () => {
   folderInputRef.value?.click()
 }
+
 
 const handleFolderChange = (e: Event) => {
   const input = e.target as HTMLInputElement
@@ -66,12 +75,12 @@ const handleFolderChange = (e: Event) => {
     :auto-upload="false"
     :show-file-list="false"
     :on-change="handleChange"
-    multiple
+    :multiple="mode === 'batch'"
     accept="image/*"
   >
     <el-icon class="el-icon--upload"><upload-filled /></el-icon>
     <div class="el-upload__text">
-      将图片拖拽到此或<em>点击上传</em>（可多选）
+      {{ mode === 'batch' ? '将图片拖拽到此或<em>点击上传</em>（可多选）' : '将图片拖拽到此或<em>点击上传</em>' }}
     </div>
     <template #tip>
       <div class="el-upload__tip text-center">
@@ -79,7 +88,7 @@ const handleFolderChange = (e: Event) => {
       </div>
     </template>
   </el-upload>
-  <div class="mt-3 flex justify-center">
+  <div v-if="mode === 'batch'" class="mt-3 flex justify-center">
     <el-button type="primary" plain @click="handleFolderPick">选择文件夹进行批量压缩（保留目录）</el-button>
     <input
       ref="folderInputRef"
